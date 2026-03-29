@@ -110,13 +110,13 @@ claude mcp add limbo -- bun run /absolute/path/to/llm-limbo/index.ts
 
 | Tool | Description |
 |------|-------------|
-| `limbo:create_domain` | Register a new data domain with a name, purpose, and file pattern |
-| `limbo:list_domains` | List all domains and their metadata |
-| `limbo:describe_domain` | Get full details on a domain including its tools |
-| `limbo:delete_domain` | Delete a domain and all its data (requires `confirm: true`) |
-| `limbo:generate_tool` | Generate and register a JS tool handler for a domain |
-| `limbo:execute_tool` | Execute a previously generated tool by name |
-| `limbo:list_tools` | List all generated tools, optionally filtered by domain |
+| `limbo_create_domain` | Register a new data domain with a name, purpose, and file pattern |
+| `limbo_list_domains` | List all domains and their metadata |
+| `limbo_describe_domain` | Get full details on a domain including its tools |
+| `limbo_delete_domain` | Delete a domain and all its data (requires `confirm: true`) |
+| `limbo_generate_tool` | Generate and register a JS tool handler for a domain |
+| `limbo_execute_tool` | Execute a previously generated tool by name |
+| `limbo_list_tools` | List all generated tools, optionally filtered by domain |
 
 ---
 
@@ -125,8 +125,8 @@ claude mcp add limbo -- bun run /absolute/path/to/llm-limbo/index.ts
 Tell Claude: *"I want to start tracking my calories."*
 
 Claude will:
-1. Call `limbo:create_domain` to register a `calories` domain
-2. Call `limbo:generate_tool` to generate `calories:log_meal`, `calories:daily_total`, and `calories:weekly_summary`
+1. Call `limbo_create_domain` to register a `calories` domain
+2. Call `limbo_generate_tool` to generate `calories_log_meal`, `calories_daily_total`, and `calories_weekly_summary`
 3. Use those tools to log meals and query totals — all in the same conversation
 
 The data lives in `data/domains/calories/data/YYYY-MM-DD.json`. The tools live in `data/domains/calories/tools.json`. Everything is readable, editable, and portable.

@@ -64,13 +64,12 @@ function buildContext(domain: string) {
 export async function generateTool(definition: ToolDefinition): Promise<void> {
   const { name, domain, description, parameters, handlerSource } = definition;
 
-  if (!/^[a-z0-9_-]+:[a-z0-9_-]+$/.test(name)) {
-    throw new Error(`Invalid tool name "${name}". Must be in format "domain:action" using lowercase, numbers, hyphens, underscores.`);
+  if (!/^[a-z0-9_-]{1,64}$/.test(name)) {
+    throw new Error(`Invalid tool name "${name}". Use lowercase letters, numbers, hyphens, underscores (e.g. "calories_log_meal").`);
   }
 
-  const [toolDomain] = name.split(":");
-  if (toolDomain !== domain) {
-    throw new Error(`Tool name prefix "${toolDomain}" must match domain "${domain}".`);
+  if (!name.startsWith(`${domain}_`)) {
+    throw new Error(`Tool name "${name}" must start with domain prefix "${domain}_".`);
   }
 
   // Validate the handler source compiles
@@ -89,8 +88,9 @@ export async function generateTool(definition: ToolDefinition): Promise<void> {
 }
 
 export async function executeTool(name: string, args: Record<string, unknown>): Promise<unknown> {
-  const [domain] = name.split(":");
-  if (!domain) throw new Error(`Invalid tool name: ${name}`);
+  const registry = await loadRegistry();
+  const domain = Object.keys(registry.domains).find((d) => name.startsWith(`${d}_`));
+  if (!domain) throw new Error(`No domain found for tool "${name}". Tool names must start with a registered domain prefix.`);
 
   const manifest = await loadToolManifest(domain);
   const tool = manifest.tools[name];

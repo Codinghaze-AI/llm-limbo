@@ -10,7 +10,7 @@ import { generateTool, executeTool, listTools } from "./tools/runtime";
 
 const BUILTIN_TOOLS: Tool[] = [
   {
-    name: "limbo:create_domain",
+    name: "limbo_create_domain",
     description: "Register a new data domain. The LLM defines the name, purpose, and data file pattern.",
     inputSchema: {
       type: "object",
@@ -23,12 +23,12 @@ const BUILTIN_TOOLS: Tool[] = [
     },
   },
   {
-    name: "limbo:list_domains",
+    name: "limbo_list_domains",
     description: "List all registered data domains and their metadata.",
     inputSchema: { type: "object", properties: {} },
   },
   {
-    name: "limbo:describe_domain",
+    name: "limbo_describe_domain",
     description: "Get full details about a specific domain including its registered tools.",
     inputSchema: {
       type: "object",
@@ -39,7 +39,7 @@ const BUILTIN_TOOLS: Tool[] = [
     },
   },
   {
-    name: "limbo:delete_domain",
+    name: "limbo_delete_domain",
     description: "Delete a domain and all its data. Requires explicit confirmation.",
     inputSchema: {
       type: "object",
@@ -51,12 +51,12 @@ const BUILTIN_TOOLS: Tool[] = [
     },
   },
   {
-    name: "limbo:generate_tool",
+    name: "limbo_generate_tool",
     description: "Generate and register a new tool for a domain. Provide the tool name, description, parameter schema, and JavaScript handler source.",
     inputSchema: {
       type: "object",
       properties: {
-        name: { type: "string", description: 'Tool name in "domain:action" format, e.g. "calories:log_meal"' },
+        name: { type: "string", description: 'Tool name in "domain_action" format, e.g. "calories_log_meal"' },
         domain: { type: "string", description: "Domain this tool belongs to" },
         description: { type: "string", description: "What this tool does" },
         parameters: {
@@ -72,19 +72,19 @@ const BUILTIN_TOOLS: Tool[] = [
     },
   },
   {
-    name: "limbo:execute_tool",
+    name: "limbo_execute_tool",
     description: "Execute a previously generated tool by name with the given arguments.",
     inputSchema: {
       type: "object",
       properties: {
-        name: { type: "string", description: 'Tool name, e.g. "calories:log_meal"' },
+        name: { type: "string", description: 'Tool name, e.g. "calories_log_meal"' },
         args: { type: "object", description: "Arguments matching the tool's parameter schema" },
       },
       required: ["name"],
     },
   },
   {
-    name: "limbo:list_tools",
+    name: "limbo_list_tools",
     description: "List all generated tools, optionally filtered by domain.",
     inputSchema: {
       type: "object",
@@ -123,7 +123,7 @@ export function createServer(): Server {
 
     try {
       switch (name) {
-        case "limbo:create_domain": {
+        case "limbo_create_domain": {
           const { name: dName, purpose, dataPattern } = args as {
             name: string;
             purpose: string;
@@ -133,24 +133,24 @@ export function createServer(): Server {
           return ok({ domainName: dName, ...domain });
         }
 
-        case "limbo:list_domains": {
+        case "limbo_list_domains": {
           const domains = await listDomains();
           return ok({ domains });
         }
 
-        case "limbo:describe_domain": {
+        case "limbo_describe_domain": {
           const { name: dName } = args as { name: string };
           const domain = await describeDomain(dName);
           return ok(domain);
         }
 
-        case "limbo:delete_domain": {
+        case "limbo_delete_domain": {
           const { name: dName, confirm } = args as { name: string; confirm: boolean };
           await deleteDomain(dName, confirm);
           return ok({ deleted: dName });
         }
 
-        case "limbo:generate_tool": {
+        case "limbo_generate_tool": {
           const { name: tName, domain, description, parameters, handlerSource } = args as {
             name: string;
             domain: string;
@@ -168,7 +168,7 @@ export function createServer(): Server {
           return ok({ generated: tName, domain });
         }
 
-        case "limbo:execute_tool": {
+        case "limbo_execute_tool": {
           const { name: tName, args: toolArgs = {} } = args as {
             name: string;
             args?: Record<string, unknown>;
@@ -177,7 +177,7 @@ export function createServer(): Server {
           return ok(result);
         }
 
-        case "limbo:list_tools": {
+        case "limbo_list_tools": {
           const { domain } = args as { domain?: string };
           const tools = await listTools(domain);
           return ok({ tools });
